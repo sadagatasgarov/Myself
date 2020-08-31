@@ -40,6 +40,18 @@ const login = asyncErrorWrapper(async (req, res, next) => {
   sendJwtToClient(user, res);
 });
 
+const editDetails = asyncErrorWrapper(async (req, res, next) => {
+  const editInformation = req.body;
+  const user = await User.findByIdAndUpdate(req.user.id, editInformation, {
+    new: true,
+    runValidators: true,
+  });
+  return res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
+
 const logout = asyncErrorWrapper(async (req, res, next) => {
   const { NODE_ENV } = process.env;
   return res
@@ -93,7 +105,7 @@ const forgotpassword = asyncErrorWrapper(async (req, res, next) => {
     return next(new CustomError("There is no user with that email"));
   }
   const resetPasswordToken = user.getResetPasswordTokenFromUser();
-  
+
   await user.save();
   const resetPasswordURL = `http://localhost:5000/api/auth/resetpassword?resetPasswordToken=${resetPasswordToken}`;
   const emailTemplate = `
@@ -121,6 +133,35 @@ const forgotpassword = asyncErrorWrapper(async (req, res, next) => {
   }
 });
 
+const resetpassword = asyncErrorWrapper(async (req, res, next) => {
+  const { resetPasswordToken } = req.query;
+  const { password } = req.body;
+  if (!resetPasswordToken) {
+    return next(
+      new CustomError("Wrong token or timeout, Please provide true token"),
+      401
+    );
+  }
+  let user = await User.findOne({
+    resetPasswordToken: resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+  if (!user) {
+    return next(new CustomError("Invalid token or Session Expired", 404));
+  }
+
+  user.password = password;
+
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+  await user.save();
+
+  return res.status(200).json({
+    status: true,
+    message: "Reset password succesfull",
+  });
+});
+
 module.exports = {
   register,
   login,
@@ -128,4 +169,6 @@ module.exports = {
   logout,
   imageUpload,
   forgotpassword,
+  resetpassword,
+  editDetails,
 };
