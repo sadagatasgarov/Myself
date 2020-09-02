@@ -4,7 +4,7 @@ const {
   getAdminAccess,
 } = require("../middlewares/authorization/auth");
 const { blockUser, deleteUser } = require("../controller/admin");
-const checkUserExist = require("../middlewares/database/databaseErrorHelpers");
+const {checkUserExist} = require("../middlewares/database/databaseErrorHelpers");
 const router = express.Router();
 //router.use(checkUserExist);
 router.use([getAccesToRoute, getAdminAccess]);
