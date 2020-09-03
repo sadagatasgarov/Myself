@@ -2,7 +2,7 @@ const CustomError = require("../../helpers/error/CustomError");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/user");
 const Question = require("../../models/question");
-
+const Answer = require("../../models/answer");
 const asyncErrorWrapper = require("express-async-handler");
 const {
   isTokenIncluded,
@@ -54,4 +54,16 @@ const getQuestionOwnerAccess = asyncErrorWrapper(async (req, res, next) => {
   next();
 });
 
-module.exports = { getAccesToRoute, getAdminAccess, getQuestionOwnerAccess };
+const getAnswerOwnerAccess = asyncErrorWrapper(async (req, res, next) => {
+  const userId = req.user.id;
+  const answerId = req.params.answer_id;
+
+  const answer = await Answer.findById(answerId);
+
+  if (answer.user != userId) {
+    return next(new CustomError("Only Owner can handle this operation", 403));
+  }
+  next();
+});
+
+module.exports = { getAccesToRoute, getAdminAccess, getQuestionOwnerAccess, getAnswerOwnerAccess};

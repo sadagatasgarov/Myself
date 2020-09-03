@@ -1,4 +1,5 @@
 const express = require("express");
+const answer = require("./answers");
 
 const {
   askNewQuestion,
@@ -7,12 +8,16 @@ const {
   editQuestion,
   deleteQuestion,
   likeQuestion,
-  undoLikeQuestion
+  undoLikeQuestion,
 } = require("../controller/question");
-const { getAccesToRoute,getQuestionOwnerAccess } = require("../middlewares/authorization/auth");
+const {
+  getAccesToRoute,
+  getQuestionOwnerAccess,
+} = require("../middlewares/authorization/auth");
 const {
   checkQuestionExist,
 } = require("../middlewares/database/databaseErrorHelpers");
+//const { route } = require("./answers");
 
 const router = express.Router();
 
@@ -24,13 +29,23 @@ router.put(
   [getAccesToRoute, checkQuestionExist, getQuestionOwnerAccess],
   editQuestion
 );
-router.delete("/:id/delete",[getAccesToRoute,checkQuestionExist,getQuestionOwnerAccess],deleteQuestion)
-router.get("/:id/like", [getAccesToRoute, checkQuestionExist],likeQuestion);
-router.get("/:id/undo_like", [getAccesToRoute, checkQuestionExist],undoLikeQuestion)
+router.delete(
+  "/:id/delete",
+  [getAccesToRoute, checkQuestionExist, getQuestionOwnerAccess],
+  deleteQuestion
+);
+router.get("/:id/like", [getAccesToRoute, checkQuestionExist], likeQuestion);
+router.get(
+  "/:id/undo_like",
+  [getAccesToRoute, checkQuestionExist],
+  undoLikeQuestion
+);
 /* router.get("/delete", (req, res) => {
   res
   .status(404)
   .send("<h1>Question delete page<h1> <br>ozumuz yazdiq 404")
 }); */
+
+router.use("/:question_id/answer", checkQuestionExist, answer);
 
 module.exports = router;

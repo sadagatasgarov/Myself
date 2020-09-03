@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
 const Schema = mongoose.Schema;
+
 const questionSchema = new Schema({
   title: {
     type: String,
@@ -30,12 +31,12 @@ const questionSchema = new Schema({
       ref: "User",
     },
   ],
-  answers:[
+  answers: [
     {
       type: mongoose.Schema.ObjectId,
-      ref:"Answers"
-    }
-  ]
+      ref: "Answer",
+    },
+  ],
 });
 
 questionSchema.pre("save", function (next) {
@@ -57,4 +58,10 @@ questionSchema.methods.makeSlug = function () {
   });
 };
 
+/* questionSchema.post("remove", async function () {
+  await Answer.deleteMany({
+    question: this._id,
+  });
+});
+ */
 module.exports = mongoose.model("Question", questionSchema);
