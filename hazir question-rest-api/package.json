@@ -1,0 +1,30 @@
+{
+  "name": "question-answer-rest-api",
+  "version": "1.0.0",
+  "description": "Express Question-Answer API",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js",
+    "import": "node dummy-generator --import",
+    "delete": "node dummy-generator --delete"
+  },
+  "keywords": [
+    "expres",
+    "rest",
+    "api"
+  ],
+  "author": "Sadagat",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-async-handler": "^1.1.4",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.1",
+    "multer": "^1.4.2",
+    "nodemailer": "^6.4.11",
+    "slugify": "^1.4.5"
+  }
+}
